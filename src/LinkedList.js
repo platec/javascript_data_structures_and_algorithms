@@ -47,11 +47,25 @@ class LinkedList {
   }
 
   removeAt(position) {
-
+    if (position > -1 && position < this.length) {
+      let current = head, previous, index = 0
+      if (position === 0) {
+        this.head = current.next
+      } else {
+        while (index++ < position) {
+          previous = current
+          current = current.next
+        }
+        previous.next = current.next
+      }
+      this.length--
+      return current.element
+    }
   }
 
   remove(element) {
-
+    let index = this.indexOf(element)
+    return this.removeAt(index)
   }
 
   indexOf(element) {
@@ -74,11 +88,9 @@ class LinkedList {
     return this.length
   }
 
-  getHead() {}
-
-  toString() {}
-
-
+  getHead() {
+    return this.head
+  }
 }
 
 export default {
