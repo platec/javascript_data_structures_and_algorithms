@@ -28,5 +28,5 @@ module.exports = {
     new webpack.optimize.UglifyJsPlugin({
       include: /\.min\.js$/
     })
-  ]  
+  ]
 };

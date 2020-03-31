@@ -81,6 +81,8 @@ var _LinkedList = _interopRequireDefault(__webpack_require__(2));
 
 var _Stack = _interopRequireDefault(__webpack_require__(3));
 
+var _Events = _interopRequireDefault(__webpack_require__(4));
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var _default = {
@@ -293,10 +295,33 @@ function () {
     }
   }, {
     key: "removeAt",
-    value: function removeAt(position) {}
+    value: function removeAt(position) {
+      if (position > -1 && position < this.length) {
+        var current = head,
+            previous,
+            index = 0;
+
+        if (position === 0) {
+          this.head = current.next;
+        } else {
+          while (index++ < position) {
+            previous = current;
+            current = current.next;
+          }
+
+          previous.next = current.next;
+        }
+
+        this.length--;
+        return current.element;
+      }
+    }
   }, {
     key: "remove",
-    value: function remove(element) {}
+    value: function remove(element) {
+      var index = this.indexOf(element);
+      return this.removeAt(index);
+    }
   }, {
     key: "indexOf",
     value: function indexOf(element) {
@@ -327,10 +352,9 @@ function () {
     }
   }, {
     key: "getHead",
-    value: function getHead() {}
-  }, {
-    key: "toString",
-    value: function toString() {}
+    value: function getHead() {
+      return this.head;
+    }
   }]);
 
   return LinkedList;
@@ -407,6 +431,127 @@ function () {
 
 var _default = {
   Stack: Stack
+};
+exports["default"] = _default;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Events =
+/*#__PURE__*/
+function () {
+  function Events() {
+    _classCallCheck(this, Events);
+
+    this._events = Object.create(null);
+  }
+
+  _createClass(Events, [{
+    key: "on",
+    value: function on(event, fn) {
+      if (Array.isArray(event)) {
+        for (var i = 0, l = event.length; i < l; i++) {
+          this.on(event[i], fn);
+        }
+      } else {
+        (this._events[event] || (this._events[event] = [])).push(fn);
+      }
+
+      return this;
+    }
+  }, {
+    key: "off",
+    value: function off(event, fn) {
+      if (!arguments.length) {
+        this._events = Object.create(null);
+        return this;
+      }
+
+      if (Array.isArray(event)) {
+        for (var _i = 0, l = event.length; _i < l; _i++) {
+          this.off(event[_i], fn);
+        }
+
+        return this;
+      }
+
+      var cbs = this._events[event];
+
+      if (!cbs) {
+        return this;
+      }
+
+      if (!fn) {
+        this._events[event] = null;
+        return this;
+      }
+
+      var cb;
+      var i = cbs.length;
+
+      while (i--) {
+        cb = cbs[i];
+
+        if (cb === fn || cb.fn === fn) {
+          cbs.splice(i, 1);
+          break;
+        }
+      }
+
+      return this;
+    }
+  }, {
+    key: "once",
+    value: function once(event, fn) {
+      var _this = this;
+
+      function on() {
+        _this.off(event, fn);
+
+        fn.apply(_this, arguments);
+      }
+
+      on.fn = fn;
+      this.on(event, on);
+      return this;
+    }
+  }, {
+    key: "emit",
+    value: function emit(event) {
+      var cbs = this._events[event];
+
+      if (cbs) {
+        var args = Array.from(arguments).slice(1);
+
+        for (var i = 0, l = cbs.length; i < l; i++) {
+          cbs[i].apply(this, args);
+        }
+      }
+
+      return this;
+    }
+  }]);
+
+  return Events;
+}();
+
+var _default = {
+  Events: Events
 };
 exports["default"] = _default;
 
